@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const routeGuard = require('../configs/route-guard.config');
 
 const Post = require('../models/Post.model');
 const Comment = require('../models/Comment.model');
@@ -8,6 +9,7 @@ const Comment = require('../models/Comment.model');
 router.get('/', (req, res) => {
   Post
     .find()
+    .populate('comments')
     .then(allPosts => {
       console.log(allPosts);
       res.render('posts/posts.hbs', {posts: allPosts});
@@ -34,14 +36,38 @@ router.post('/create', (req, res) => {
 /* POST a new comment */
 router.post('/:postId/comment', (req, res) => {
   const { postId } = req.params;
-  const { message } = req.body;
+  const { comment } = req.body;
+
+  console.log({postId});
+
+  const submittedComment = {
+    message: comment,
+    post: postId,
+    user: req.session.loggedInUser._id
+  };
 
   Comment
-    .create(message)
+    .create(submittedComment)
     .then(newComment => {
-      res.redirect('back');
+
+      console.log({newComment});
+      console.log({user: req.session.loggedInUser});
+
+      Post
+        .findById(postId)
+        .then(async postFromDB => {
+
+          postFromDB.comments.push(newComment._id);
+          await postFromDB.save();
+
+          console.log({postFromDB});
+          res.redirect('back');
+
+        })
+        .catch(err => console.log(err));
+
     })
     .catch(err => console.log(err));
-})
+});
 
 module.exports = router;
