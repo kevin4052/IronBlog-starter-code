@@ -1,0 +1,17 @@
+<h1>Post Wall</h1>
+
+{{#each posts}}
+  <div class="post">
+    <h4>{{ user.username }}</h4>
+    <p>{{ this.message }}</p>
+    {{#each this.comments}}
+      <div class="comment">
+        <p>{{ this.message }}</p>
+      </div>
+    {{/each}}
+    <form action="/posts/{{this._id}}/comment" method="post">
+      <input type="text">
+      <button>post comment</button>
+    </form>
+  </div>
+{{/each}}

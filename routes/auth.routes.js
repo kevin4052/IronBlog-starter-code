@@ -30,7 +30,9 @@ router.post('/signup', (req, res, next) => {
   // make sure passwords are strong:
   const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
   if (!regex.test(password)) {
-    res.status(500).render('auth/signup-form.hbs', {
+    res
+      .status(500)
+      .render('auth/signup-form.hbs', {
       errorMessage: 'Password needs to have at least 6 chars and must contain at least one number, one lowercase and one uppercase letter.'
     });
     return;
@@ -41,18 +43,14 @@ router.post('/signup', (req, res, next) => {
     .then(salt => bcryptjs.hash(password, salt))
     .then(hashedPassword => {
       return User.create({
-        // username: username
         username,
         email,
-        // passwordHash => this is the key from the User model
-        //     ^
-        //     |            |--> this is placeholder (how we named returning value from the previous method (.hash()))
         passwordHash: hashedPassword
       });
     })
     .then(userFromDB => {
       console.log('Newly created user is: ', userFromDB);
-      // add code here
+      res.redirect('/');
     })
     .catch(error => {
       if (error instanceof mongoose.Error.ValidationError) {
@@ -109,7 +107,8 @@ router.post('/login', (req, res, next) => {
 ////////////////////////////////////////////////////////////////////////
 
 router.post('/logout', (req, res) => {
-  // add code here
+  req.session.destroy();
+  res.redirect('/');
 });
 
 router.get('/profile', routeGuard, (req, res) => {
