@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 
 const Post = require('../models/Post.model');
+const Comment = require('../models/Comment.model');
 
 /* GET home page */
-router.get('/posts', (req, res) => {
+router.get('/', (req, res) => {
   Post
     .find()
     .then(allPosts => {
@@ -15,10 +16,11 @@ router.get('/posts', (req, res) => {
   
 });
 
-router.get('/post-create', (req, res) => res.render('posts/create-post.hbs'));
+/* GET create post page */
+router.get('/create', (req, res) => res.render('posts/create-post.hbs'));
 
-
-router.post('/post-create', (req, res) => {
+/* POST a new post */
+router.post('/create', (req, res) => {
   // console.log(req.body);
   Post
     .create(req.body)
@@ -28,5 +30,18 @@ router.post('/post-create', (req, res) => {
     })
     .catch(err => console.log(err));  
 });
+
+/* POST a new comment */
+router.post('/:postId/comment', (req, res) => {
+  const { postId } = req.params;
+  const { message } = req.body;
+
+  Comment
+    .create(message)
+    .then(newComment => {
+      res.redirect('back');
+    })
+    .catch(err => console.log(err));
+})
 
 module.exports = router;

@@ -10,7 +10,7 @@
       </div>
     {{/each}}
     <form action="/posts/{{this._id}}/comment" method="post">
-      <input type="text">
+      <input type="text" name="message">
       <button>post comment</button>
     </form>
   </div>
