@@ -70,7 +70,9 @@ router.post('/signup', (req, res, next) => {
 ////////////////////////////////////////////////////////////////////////
 
 // .get() route ==> to display the login form to users
-router.get('/login', (req, res) => res.render('auth/login-form.hbs'));
+router.get('/login', (req, res) => {
+  res.render('auth/login-form.hbs');
+});
 
 // .post() login route ==> to process form data
 router.post('/login', (req, res, next) => {
@@ -92,6 +94,7 @@ router.post('/login', (req, res, next) => {
         return;
       } else if (bcryptjs.compareSync(password, user.passwordHash)) {
           req.session.loggedInUser = user;
+          console.log(req.session.loggedInUser);
           res.redirect('/profile');
       } else {
         res.render('auth/login-form.hbs', {

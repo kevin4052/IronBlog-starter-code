@@ -9,7 +9,7 @@ const Comment = require('../models/Comment.model');
 router.get('/', (req, res) => {
   Post
     .find()
-    .populate('comments')
+    .populate("user comments")
     .then(allPosts => {
       console.log(allPosts);
       res.render('posts/posts.hbs', {posts: allPosts});
@@ -23,9 +23,18 @@ router.get('/create', (req, res) => res.render('posts/create-post.hbs'));
 
 /* POST a new post */
 router.post('/create', (req, res) => {
-  // console.log(req.body);
+  const { title, message } = req.body;
+
+  const postData = {
+    title,
+    message,
+    user: req.session.loggedInUser._id
+  };
+
+  console.log({postData});
+
   Post
-    .create(req.body)
+    .create(postData)
     .then(newPost => {
       console.log(newPost);
       res.redirect('/posts');
@@ -38,7 +47,7 @@ router.post('/:postId/comment', (req, res) => {
   const { postId } = req.params;
   const { comment } = req.body;
 
-  console.log({postId});
+  // console.log({postId});
 
   const submittedComment = {
     message: comment,

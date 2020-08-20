@@ -2,7 +2,7 @@
 
 {{#each posts}}
   <div class="post">
-    <h4>{{ user.username }}</h4>
+    <h4>{{ this.title }} by {{ this.user.username }}</h4>
     <p>{{ this.message }}</p>
     {{#each this.comments}}
       <div class="comment">
