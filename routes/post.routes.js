@@ -10,6 +10,12 @@ router.get('/', (req, res) => {
   Post
     .find()
     .populate("user comments")
+    .populate({
+      path: 'comments',
+      populate: {
+        path: 'user'
+      }
+    })
     .then(allPosts => {
       console.log(allPosts);
       res.render('posts/posts.hbs', {posts: allPosts});
